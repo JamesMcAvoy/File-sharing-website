@@ -1,5 +1,6 @@
 {
     "require": {
+    	"php": "^7.0",
         "lordarryn/psrrouter": "^1.0",
         "zendframework/zend-diactoros": "^1.7"
     }

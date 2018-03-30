@@ -8,3 +8,4 @@ composer install
 ```
 
 ## Dependencies
+PHP>=7

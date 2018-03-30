@@ -1,0 +1,6 @@
+{
+	"websiteName": "File sharing website",
+	"websiteMaxSize": "10GB",
+	"accountMaxSize": "30MB",
+	"allowNewAccounts": true
+}
