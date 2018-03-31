@@ -13,7 +13,7 @@ if(file_exists(__DIR__.'/../config.json')) {
 	$config = json_decode(file_get_contents(__DIR__.'/../config.json'), true);
 } else die('Config file not found');
 
-//Run the website
+//Run the app
 use Zend\Diactoros\ServerRequestFactory as Request,
 	Zend\Diactoros\Response as Response,
 	Zend\Diactoros\Response\SapiEmitter as Emitter;

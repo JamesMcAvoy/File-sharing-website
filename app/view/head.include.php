@@ -17,6 +17,8 @@
 					<nav class="nav nav-masthead justify-content-center">
 						<a class="nav-link<?= ($path == '/') ? ' active' : '' ?>" href="/">Home</a>
 						<a class="nav-link<?= ($path == '/about') ? ' active' : '' ?>" href="/about">About</a>
+                        <?= isset($logged) ? '<a class="nav-link" href="/logout">Logout</a>'.PHP_EOL : '' ; ?>
+
 					</nav>
 				</div>
 			</header>

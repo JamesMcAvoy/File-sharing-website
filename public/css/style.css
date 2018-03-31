@@ -54,24 +54,9 @@ body {
 	border-bottom-color: #fff;
 }
 
-@media (min-width: 48em) {
-	.masthead-brand {
-		float: left;
-	}
-	.nav-masthead {
-		float: right;
-	}
-}
-
 .error-image {
 	border-radius: 3px;
 	opacity: 0.6;
-}
-
-@media (max-width: 48em) {
-	.error-image {
-		width: 60%;
-	}
 }
 
 .cover {
@@ -80,4 +65,53 @@ body {
 
 .mastfoot {
 	color: rgba(255, 255, 255, .5);
+}
+
+.cover-index {
+	text-align: left;
+	margin-top: 25px;
+	padding-left: 175px;
+}
+
+.register-captcha, .form-control {
+	width: 305px;
+	margin: 5px auto;
+}
+
+input[type="password"], input[type="text"], input[type="email"] {
+	color: #111;
+	background-color: #DDD;
+}
+
+
+::-moz-selection {
+	color: #333;
+	background-color: #DCDCDC;
+}
+
+::selection {
+	color: #333;
+	background-color: #DCDCDC;
+}
+
+@media (max-width: 48em) {
+	.error-image {
+		width: 60%;
+	}
+	.form-control {
+		width: 250px;
+	}
+	.cover-index {
+		text-align: center;
+		padding: 0;
+	}
+}
+
+@media (min-width: 48em) {
+	.masthead-brand {
+		float: left;
+	}
+	.nav-masthead {
+		float: right;
+	}
 }

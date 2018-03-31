@@ -1,5 +1,5 @@
 # File sharing website
-This is a file sharing website.  
+This is a file sharing website.
 
 ## Installation
 ```
@@ -8,4 +8,8 @@ composer install
 ```
 
 ## Dependencies
-PHP>=7
+* PHP>=7
+* Make sure you have your "rewrite engine" on (an .htaccess is in the public folder for Apache users)
+
+### To-do
+* Admin page

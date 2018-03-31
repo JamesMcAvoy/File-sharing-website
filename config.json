@@ -1,6 +1,18 @@
 {
 	"websiteName": "File sharing website",
+	"cookieName": "syndedemenos",
+
+	"recaptcha_public_key": "",
+	"recaptcha_private_key": "",
+
+	"dbHost": "127.0.0.1",
+	"dbPort": "3306",
+	"dbName": "prm",
+	"dbUser": "root",
+	"dbPass": "",
+
 	"websiteMaxSize": "10GB",
 	"accountMaxSize": "30MB",
-	"allowNewAccounts": true
+	"allowNewAccounts": true,
+	"timeBeforeNewUpload": 1000
 }

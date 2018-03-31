@@ -5,6 +5,11 @@
 				</div>
 			</footer>
 		</div>
+		
 
+		<?= isset($displayCaptcha) ? '<script src="https://www.google.com/recaptcha/api.js"></script>'.PHP_EOL : '' ; ?>
+		
+		<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+		<script src="js/app.js"></script>
     </body>
 </html>
