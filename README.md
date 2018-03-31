@@ -1,5 +1,6 @@
 # File sharing website
 This is a file sharing website.
+<img src="https://i.imgur.com/3a9k0c2.png" />
 
 ## Installation
 ```

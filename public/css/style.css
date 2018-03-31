@@ -104,11 +104,26 @@ input[type="password"], input[type="text"], input[type="email"] {
 .inPages {
 	width: 3em;
 	border: 1px solid #DDD;
+	border-right: none;
+	box-shadow: 0 .1rem .1rem rgba(0, 0, 0, .5);
+}
+
+.inPages:first-child {
+	border-radius: 3px 0 0 3px;
+}
+
+.inPages:last-child {
+	border-radius: 0 3px 3px 0;
+	border-right: 1px solid #DDD;
 }
 
 .pageInput {
 	width: 3em;
 	text-align: center;
+}
+
+.clickable {
+	font-size: 1.1em;
 }
 
 .clickable:hover, .clickable:focus {
@@ -152,19 +167,20 @@ input[type="password"], input[type="text"], input[type="email"] {
 	bottom: 0;
 	left: 0;
 	right: 0;
-	height: 70px;
+	height: 80px;
 	background-color: #333;
-	padding: 15px;
+	padding: 7px;
 }
 
-.info-upload-dotted {
+#upload-trigger {
 	position: absolute;
-	top: 5px;
-	bottom: 75px;
-	left: 5px;
-	right: 5px;
-	border: 3px dotted #DDD;
-	border-radius: 10px;
+	top: 3px;
+	bottom: 83px;
+	left: 3px;
+	right: 3px;
+	border: 2px dotted #DDD;
+	border-radius: 10px 10px 0 0;
+	cursor: grab;
 }
 
 #close {
@@ -178,8 +194,8 @@ input[type="password"], input[type="text"], input[type="email"] {
 }
 
 .inputfile {
-	width: 0.1px;
-	height: 0.1px;
+	width: 10.1px;
+	height: 10.1px;
 	overflow: hidden;
 	position: absolute;
 	z-index: -1;
@@ -197,12 +213,38 @@ input[type="password"], input[type="text"], input[type="email"] {
 .labelfile {
 	cursor: pointer;
 	color: #333;
-	width: 80px;
+	width: 75px;
 	background-color: #CCC;
 	background-image: linear-gradient(to bottom, #e0e0e0, #b7b7b7);
 	border-radius: 4px;
 	box-shadow: 0 2px 4px 0 #000;
 	margin: 5px;
+}
+
+#upload-name {
+	position: absolute;
+	left: 0.5rem;
+	bottom: 1rem;
+}
+
+#upload-bar {
+	position: absolute;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	border-radius: 0;
+	background-color: #CCC;
+	background-image: linear-gradient(to bottom, #e0e0e0, #b7b7b7);
+}
+
+#upload-msg {
+	position: absolute;
+	right: 0.5rem;
+	bottom: 1rem;
+}
+
+.progress-dark {
+	background-color: #004600;
 }
 
 ::-moz-selection {
