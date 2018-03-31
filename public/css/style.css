@@ -8,6 +8,14 @@ html, body {
 	background-color: #111;
 }
 
+header, div.inner.cover, footer {
+	-webkit-transition: filter .25s ease;
+	-moz-transition: filter .25s ease;
+	-ms-transition: filter .25s ease;
+	-o-transition: filter .25s ease;
+	transition: filter .25s ease;
+}
+
 body {
 	display: -ms-flexbox;
 	display: -webkit-box;
@@ -83,6 +91,119 @@ input[type="password"], input[type="text"], input[type="email"] {
 	background-color: #DDD;
 }
 
+.pages {
+	margin: 20px;
+	display: -ms-flexbox;
+	display: -webkit-box;
+	display: flex;
+	-ms-flex-pack: center;
+	-webkit-box-pack: center;
+	justify-content: center;
+}
+
+.inPages {
+	width: 3em;
+	border: 1px solid #DDD;
+}
+
+.pageInput {
+	width: 3em;
+	text-align: center;
+}
+
+.clickable:hover, .clickable:focus {
+	cursor: pointer;
+	background-color: #222;
+}
+
+.clickable:active {
+	background-color: #333;
+	border-color: #FFF;
+	color: #DDD;
+}
+
+.info-upload {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	-webkit-transform: translate(-50%, -50%);
+	-moz-transform: translate(-50%, -50%);
+	-ms-transform: translate(-50%, -50%);
+	-o-transform: translate(-50%, -50%);
+	transform: translate(-50%, -50%);
+	display: -ms-flexbox;
+	display: -webkit-box;
+	display: flex;
+	-ms-flex-pack: center;
+	-webkit-box-pack: center;
+	justify-content: center;
+	-ms-flex-direction: column;
+	-webkit-flex-direction: column;
+	flex-direction: column;
+	width: 700px;
+	height: 400px;
+	background: url('../img/drag.gif') no-repeat fixed center;
+	border-radius: 10px 10px 0 0;
+	box-shadow: 5px 5px 3px #000;
+}
+
+.info-upload-footer {
+	position: absolute;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	height: 70px;
+	background-color: #333;
+	padding: 15px;
+}
+
+.info-upload-dotted {
+	position: absolute;
+	top: 5px;
+	bottom: 75px;
+	left: 5px;
+	right: 5px;
+	border: 3px dotted #DDD;
+	border-radius: 10px;
+}
+
+#close {
+	cursor: pointer;
+	display: inline;
+	position: absolute;
+	top: 0;
+	right: 0;
+	padding: 15px;
+	font-size: 1.5em;
+}
+
+.inputfile {
+	width: 0.1px;
+	height: 0.1px;
+	overflow: hidden;
+	position: absolute;
+	z-index: -1;
+}
+
+.inputfile:focus + label {
+	outline: 1px dotted #000;
+	outline: -webkit-focus-ring-color auto 5px;
+}
+
+.inputfile + label * {
+	pointer-events: none;
+}
+
+.labelfile {
+	cursor: pointer;
+	color: #333;
+	width: 80px;
+	background-color: #CCC;
+	background-image: linear-gradient(to bottom, #e0e0e0, #b7b7b7);
+	border-radius: 4px;
+	box-shadow: 0 2px 4px 0 #000;
+	margin: 5px;
+}
 
 ::-moz-selection {
 	color: #333;
@@ -104,6 +225,9 @@ input[type="password"], input[type="text"], input[type="email"] {
 	.cover-index {
 		text-align: center;
 		padding: 0;
+	}
+	.info-upload {
+		width: 90%;
 	}
 }
 

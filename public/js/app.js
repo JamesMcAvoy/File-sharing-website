@@ -19,4 +19,25 @@ $(() => {
 		} else $('#form').submit();
 	});
 
+	//Upload
+	$('#upload-trigger').on('click', (e) => {
+		$('.info-upload').show(250);
+		$('header, div.inner.cover, footer').css('filter', 'blur(5px)');
+		return false;
+	});
+
+	$('#close').on('click', (e) => {
+        $('.info-upload').hide(250);
+        $('header, div.inner.cover, footer').css('filter', '');
+	});
+
+	$(document).click((e) => { 
+		if(!$(e.target).closest('.info-upload').length) {
+			if($('.info-upload').is(":visible")) {
+				$('.info-upload').hide(250);
+				$('header, div.inner.cover, footer').css('filter', '');
+			}
+		}
+	});
+
 });
