@@ -55,6 +55,13 @@ $(() => {
 	};
 
 	/**
+	 * shitposting
+	 */
+	$('.shake-error').on('mouseover', (e) => {
+		shake($('.shake-error'), 10);
+	});
+
+	/**
 	 * Register form
 	 */
 	$('#register').on('click', (e) => {
@@ -81,31 +88,51 @@ $(() => {
 	 * Upload + drag system
 	 */
 	const upload = function(f) {
+		var apikey = $('#cookie').val();
+		if(apikey === '')  {
+			$('#upload-msg').text('Error : your apikey is empty.');
+			return;
+		}
+
 		(f.name.length < 50) ? $('#upload-name').text(f.name) : $('#upload-name').text(f.name.substring(0, 47) + '...');
 
-		var reader = new FileReader();
+		var formData = new FormData();
+		formData.append('file', f);
+		formData.append('apikey', $('#cookie').val());
 
-		reader.onloadstart = function(e) {
-			$('#upload-bar').css('display', 'inline-block');
-		};
-
-		reader.onprogress = function(e) {
-			if(e.lengthComputable) {
-				let percent = Math.round((e.loaded/e.total)*1000)/10;
-				$('#upload-bar div').css('width', percent+'%').text(percent+'%');
+		$.ajax({
+			url: '/api/upload',
+			type: 'POST',
+			enctype: 'multipart/form',
+			data: formData,
+			dataType: 'json',
+			processData: false,
+			contentType: false,
+			cache: false,
+			beforeSend: () => {
+				$('#upload-bar').css('display', 'inline-block');
+				$('#upload-bar div').css('width', '0%').text('0%').css('background-color', '#004600');
+			},
+			xhr: () => {
+				var xhr = $.ajaxSettings.xhr();
+				xhr.upload.onprogress = (e) => {
+					if(e.lengthComputable) {
+						let percent = Math.round((e.loaded/e.total)*1000)/10;
+						$('#upload-bar div').css('width', percent+'%').text(percent+'%');
+					}
+				};
+				return xhr;
+			},
+			error: (e) => {
+				console.log(e.statusText);
+				$('#upload-bar div').css('background-color', '#990000');
+			},
+			complete: (data) => {
+				$('#upload-bar div').css('width', '100%').text('100%');
+				if(data.responseJSON.success) $('#upload-msg').html('<a href="/'+data.responseJSON.msg+'">'+data.responseJSON.msg+'</a>');
+				else $('#upload-msg').text(data.responseJSON.msg);
 			}
-		};
-
-		reader.onload = function(e) {
-			data = e.target.result;
-			$('#upload-msg').html('<a href="#">url to image</a>');
-		};
-
-		reader.onloadend = function(e) {
-			$('#upload-bar div').css('width', '100%').text('100%');
-		};
-
-		reader.readAsDataURL(f);
+		});
 	};
 
 	const removeUploadPopup = function() {
@@ -114,6 +141,7 @@ $(() => {
 		$('#upload-name').empty();
 		$('#upload-msg').empty();
 		$('#upload-bar').css('display', 'none');
+		$('#upload-bar div').css('background-color', '#004600');
 	};
 
 	$('#upload-display').on('click', (e) => {

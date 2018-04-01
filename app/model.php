@@ -39,12 +39,25 @@ function nameExists($db, $name) {
 }
 
 /**
- * Return if api key is in the DB
+ * Return if filename is in the DB
+ */
+function filenameExists($db, $filename) {
+
+	$req = $db->prepare('CALL does_filename_exist(:filename, @response)');
+	$req->bindParam(':filename', $filename, PDO::PARAM_STR, 128);
+	$req->execute();
+	$req->closeCursor();
+	return ($db->query('SELECT @response AS response')->fetch(PDO::FETCH_ASSOC)['response'] == '1');
+
+}
+
+/**
+ * Return if an api key is in the DB
  */
 function apikeyExists($db, $apikey) {
 
 	$req = $db->prepare('CALL does_apikey_exist(:apikey, @response)');
-	$req->bindParam(':apikey', $apikey, PDO::PARAM_STR, 64);
+	$req->bindParam(':apikey', $apikey, PDO::PARAM_STR, 256);
 	$req->execute();
 	$req->closeCursor();
 	return ($db->query('SELECT @response AS response')->fetch(PDO::FETCH_ASSOC)['response'] == '1');
@@ -78,6 +91,58 @@ function getApikeyFromUser($db, $name) {
 }
 
 /**
+ * Return the size used in bytes of the user
+ */
+function getSizeUsedFromApikey($db, $apikey) {
+
+	$req = $db->prepare('CALL get_size_used_from_apikey(:apikey, @response)');
+	$req->bindParam(':apikey', $apikey, PDO::PARAM_STR, 256);
+	$req->execute();
+	$req->closeCursor();
+	return $db->query('SELECT @response AS response')->fetch(PDO::FETCH_ASSOC)['response'];
+
+}
+
+/**
+ * Return the total size used
+ */
+function getTotalSizeUsed($db) {
+
+	$req = $db->prepare('CALL get_total_size_used(@response)');
+	$req->execute();
+	$req->closeCursor();
+	return $db->query('SELECT @response AS response')->fetch(PDO::FETCH_ASSOC)['response'];
+
+}
+
+/**
+ * Return the timestamp of the last upload
+ */
+function getLastTimestamp($db, $apikey) {
+
+	$req = $db->prepare('CALL get_last_upload_from_apikey(:apikey, @response)');
+	$req->bindParam(':apikey', $apikey, PDO::PARAM_STR, 256);
+	$req->execute();
+	$req->closeCursor();
+	$return = $db->query('SELECT @response AS response')->fetch(PDO::FETCH_ASSOC)['response'];
+	return is_null($return) ? 0 : strtotime($return); 
+
+}
+
+/**
+ * Return if the user is allowed to upload
+ */
+function isAllowedToUpload($db, $apikey) {
+
+	$req = $db->prepare('CALL is_allowed(:apikey, @response)');
+	$req->bindParam(':apikey', $apikey, PDO::PARAM_STR, 256);
+	$req->execute();
+	$req->closeCursor();
+	return ($db->query('SELECT @response AS response')->fetch(PDO::FETCH_ASSOC)['response'] == '1');
+
+}
+
+/**
  * Create an account
  */
 function createAccount($db, $name, $email, $pass, $apikey) {
@@ -89,5 +154,37 @@ function createAccount($db, $name, $email, $pass, $apikey) {
 	$req->bindParam(':apikey', $apikey, PDO::PARAM_STR, 256);
 	$req->execute();
 	$req->closeCursor();
+
+}
+
+/**
+ * Upload a file
+ */
+function upload($db, $stream, $hash, $apikey, $filename, $mediaType, $size) {
+
+	$req = $db->prepare('CALL upload_file(:stream, :hash, :apikey, :filename, :mediaType, :size)');
+	$req->bindParam(':stream', $stream, PDO::PARAM_LOB);
+	$req->bindParam(':hash', $hash, PDO::PARAM_STR, 128);
+	$req->bindParam(':apikey', $apikey, PDO::PARAM_STR, 256);
+	$req->bindParam(':filename', $filename, PDO::PARAM_STR, 64);
+	$req->bindParam(':mediaType', $mediaType, PDO::PARAM_STR, 64);
+	$req->bindParam(':size', $size, PDO::PARAM_INT, 11);
+	$req->execute();
+	$req->closeCursor();
+
+}
+
+/**
+ * Return a file and its blob/mime type
+ */
+function getFile($db, $filename) {
+
+	$req = $db->prepare('CALL  get_stream_media_from_filename(:filename, @r_stream, @r_media)');
+	$req->bindParam(':filename', $filename, PDO::PARAM_STR, 64);
+	$req->execute();
+	$req->closeCursor();
+	$stream = $db->query('SELECT @r_stream AS r_stream')->fetch(PDO::FETCH_ASSOC)['r_stream'];
+	$media = $db->query('SELECT @r_media AS r_media')->fetch(PDO::FETCH_ASSOC)['r_media'];
+	return [$stream, $media];
 
 }

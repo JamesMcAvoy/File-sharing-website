@@ -12,7 +12,7 @@ require __DIR__.'/controllers.php';
 $app = new Router();
 
 /**
- * 404 error page + /login page
+ * 404 error page + /login page + route sensitive
  */
 $app->setParam('404', function($req, $res) use($config) {
 
@@ -25,6 +25,8 @@ $app->get('/login', function($req, $res) use($config) {
 	return error404($req, $res, $config);
 	
 });
+
+$app->setParam('CASE_SENSITIVE', true);
 
 /**
  * Index page
@@ -83,3 +85,15 @@ $app->post('/login', function($req, $res) use($config) {
 	return loginPostController($req, $res, $config);
 
 });
+
+/**
+ * Route for getting a file
+ */
+$app->get('/{file}', function($req, $res, $slug) use($config) {
+
+	return getFileController($req, $res, array_merge($config, ['file' => $slug['file']]));
+
+})->regex('/.{6,10}/');
+
+//API routes included
+require __DIR__.'/api/api_routes.php';

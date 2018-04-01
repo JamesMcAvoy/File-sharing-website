@@ -13,6 +13,7 @@
 
 	"websiteMaxSize": "10GB",
 	"accountMaxSize": "30MB",
+	"uploadMaxSize": "2MB",
 	"allowNewAccounts": true,
 	"timeBeforeNewUpload": 1000
 }

@@ -63,6 +63,7 @@ body {
 }
 
 .error-image {
+	max-width: 400px;
 	border-radius: 3px;
 	opacity: 0.6;
 }

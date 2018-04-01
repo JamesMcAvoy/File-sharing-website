@@ -8,6 +8,9 @@
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
+//Date timezone
+date_default_timezone_set('Europe/Paris');
+
 //Config
 if(file_exists(__DIR__.'/../config.json')) {
 	$config = json_decode(file_get_contents(__DIR__.'/../config.json'), true);

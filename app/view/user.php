@@ -24,6 +24,7 @@
 				<div class="info-upload-footer">
 					<div class="info-upload-footer-top">
 						<input type="file" name="file" id="inputFile" class="inputfile" />
+						<input type="hidden" id="cookie" value="<?= isset($cookie) ? $cookie : '' ; ?>" />
 						<label for="inputFile" class="labelfile">Browse</label>
 						<span>or drag a file</span>
 					</div>

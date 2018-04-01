@@ -18,13 +18,13 @@ function render(String $_path, $_res, Array $_vars = []) {
 	}
 
 	ob_start();
-    require $_path;
-    $stream = ob_get_clean();
+	require $_path;
+	$stream = ob_get_clean();
 
-    $_body = $_res->getBody();
-    $_body->write($stream);
+	$_body = $_res->getBody();
+	$_body->write($stream);
 
-    return $_res->withBody($_body);
+	return $_res->withBody($_body);
 
 }
 
@@ -49,8 +49,24 @@ function convertToBytes(String $value) {
  * Generate an api key
  */
 function createToken() {
-
 	return base64_encode(openssl_random_pseudo_bytes(64));
+}
+
+/**
+ * Generate a filename to store in the DB and to access to the file
+ */
+function createFilename($db, $oldfilename) {
+
+	if(isset(pathinfo($oldfilename)['extension']) && strlen(pathinfo($oldfilename)['extension']) <= 4) {
+		do {
+			$new = substr(str_shuffle('azertyuiopqsdfghjklmwxcvbnAZERTYUIOPQSDFGHJKLMWXCVBN0123456789'), 0, 5).'.'.pathinfo($oldfilename)['extension'];
+		} while(filenameExists($db, $new));
+	} else {
+		do {
+			$new = substr(str_shuffle('azertyuiopqsdfghjklmwxcvbnAZERTYUIOPQSDFGHJKLMWXCVBN0123456789'), 0, 6);
+		} while(filenameExists($db, $new));
+	}
+	return $new;
 
 }
 
@@ -113,7 +129,8 @@ function indexController($req, $res, $config) {
 				$config,
 				[
 					'path' => $req->getRequestTarget(),
-					'logged' => true
+					'logged' => true,
+					'cookie' => $session[$config['cookieName']]
 				]
 			)
 		);
@@ -365,5 +382,45 @@ function loginPostController($req, $res, $config) {
 	$token = getApikeyFromUser($db, $post['name']);
 
 	return $res->withStatus(302)->withHeader('Location', '/')->withHeader('Set-Cookie', "{$config['cookieName']}=$token");
+
+}
+
+/**
+ * Controller for getting files
+ */
+function getFileController($req, $res, $config) {
+
+	$db = connect($config);
+
+	//If database error
+	if(is_string($db)) {
+		return render('404.php', $res, array_merge($config,
+			[
+				'path'	   => '/'
+			]
+		));
+	}
+
+	//If filename does not exist
+	if(!filenameExists($db, $config['file'])) {
+		return render('404.php', $res, array_merge($config,
+			[
+				'path'	   => '/'
+			]
+		));
+	}
+
+	list($stream, $media) = getFile($db, $config['file']);
+	$body = $res->getBody();
+	$body->write($stream);
+
+	$cacheTime = 60*60*24;
+	$t = gmdate('D, d M Y H:i:s ', time() + $cacheTime).'GMT';
+
+	return $res->withBody($body)
+			    ->withHeader('Content-Type', $media)
+			    ->withHeader('Expires', $t)
+			    ->withHeader('Pragma', 'cache')
+			    ->withHeader('Cache-control', "max-age=$cacheTime");
 
 }
