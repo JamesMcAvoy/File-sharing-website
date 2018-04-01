@@ -7,6 +7,7 @@ This is a file sharing website.
 git clone https://github.com/JamesMcAvoy/File-sharing-website.git
 composer install
 ```
+Since you can not change the ```upload_max_filesize``` parameter directly in the config file/script, you have to be sure that the value of ```"accountMaxSize"``` is smaller than ```upload_max_filesize``` on your php.ini file (by default 2MB).
 
 ## Dependencies
 * PHP>=7
