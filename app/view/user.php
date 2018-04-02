@@ -53,7 +53,7 @@
 				<i class="fa fa-close" id="close-infos"></i>
 				<p>
 					Size limit : <?= $accountMaxSize ?><br />
-					Upload limit : <?= $uploadMaxSize ?><br />
+					Limit per upload : <?= $uploadMaxSize ?><br />
 					Current size used : <?= $size ?><br />
 					Files uploaded : <?= $number ?><br />
 					Your API key : <code class="apikey-copy"><?= $cookie ?></code> (click to copy)
