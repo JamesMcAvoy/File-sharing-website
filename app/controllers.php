@@ -410,17 +410,29 @@ function getFileController($req, $res, $config) {
 		));
 	}
 
-	list($stream, $media) = getFile($db, $config['file']);
+	list($stream, $media, $date, $size) = getFile($db, $config['file']);
+	
 	$body = $res->getBody();
 	$body->write($stream);
 
-	$cacheTime = 60*60*24;
-	$t = gmdate('D, d M Y H:i:s ', time() + $cacheTime).'GMT';
+	$last_modified_time = strtotime($date);
+	$etag = md5($last_modified_time);
+	$cacheTime = 60*60*24*7; //1 week
 
-	return $res->withBody($body)
-			    ->withHeader('Content-Type', $media)
-			    ->withHeader('Expires', $t)
-			    ->withHeader('Pragma', 'cache')
-			    ->withHeader('Cache-control', "max-age=$cacheTime");
+	$res = $res->withBody($body)
+			   ->withHeader('Content-Type', $media)
+			   ->withHeader('Content-Length', $size)
+			   ->withHeader('Last-Modified', gmdate('D, d M Y H:i:s ', $last_modified_time).'GMT')
+			   ->withHeader('Cache-control', 'public, max-age='.$cacheTime)
+			   ->withHeader('ETag', $etag);
+
+	if(
+		($req->hasHeader('If-Modified-Since') && strtotime($req->getHeader('if-modified-since')['0']) == $last_modified_time) ||
+		($req->hasHeader('If-None-Match') && $etag == trim($req->getHeader('if-none-match')['0']))
+	) {
+		$res = $res->withStatus(304);
+	}
+
+	return $res;
 
 }

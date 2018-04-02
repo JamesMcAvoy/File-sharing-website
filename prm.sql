@@ -1,5 +1,6 @@
 -- phpMyAdmin SQL Dump
 -- version 4.2.12deb2+deb8u2
+-- http://www.phpmyadmin.net
 -- Server version: 5.5.59-0+deb8u1
 -- PHP Version: 7.0.28-1~dotdeb+8.1
 
@@ -20,7 +21,7 @@ DROP PROCEDURE IF EXISTS `create_user`$$
 CREATE DEFINER=`root`@`localhost` PROCEDURE `create_user`(IN `p_name` VARCHAR(64), IN `p_email` VARCHAR(64), IN `p_pass` VARCHAR(128), IN `p_apikey` VARCHAR(256))
     NO SQL
 BEGIN
-	INSERT INTO users(`name`, `email`, `password`, `api_key`, `file_number`, `size_used`, `allowed`)
+  INSERT INTO users(`name`, `email`, `password`, `api_key`, `file_number`, `size_used`, `allowed`)
     VALUES (p_name, p_email, p_pass, p_apikey, 0, 0, 1);
 END$$
 
@@ -29,7 +30,7 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `does_apikey_exist`(IN `p_apikey` VA
     NO SQL
 BEGIN
 
-	SELECT COUNT(*) FROM users WHERE api_key=p_apikey INTO response;
+  SELECT COUNT(*) FROM users WHERE api_key=p_apikey INTO response;
 
 END$$
 
@@ -38,7 +39,7 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `does_filename_exist`(IN `p_filename
     NO SQL
 BEGIN
 
-	SELECT COUNT(*) FROM files WHERE file_name=p_filename INTO response;
+  SELECT COUNT(*) FROM files WHERE file_name=p_filename INTO response;
 
 END$$
 
@@ -47,7 +48,7 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `does_name_exist`(IN `p_name` VARCHA
     NO SQL
 BEGIN
 
-	SELECT COUNT(*) FROM users WHERE name=p_name INTO response;
+  SELECT COUNT(*) FROM users WHERE name=p_name INTO response;
 
 END$$
 
@@ -55,10 +56,10 @@ DROP PROCEDURE IF EXISTS `do_name_email_exist`$$
 CREATE DEFINER=`root`@`localhost` PROCEDURE `do_name_email_exist`(IN `p_name` VARCHAR(64), IN `p_email` VARCHAR(64), OUT `response` INT(2))
     NO SQL
 BEGIN
-	SELECT
-    	(SELECT COUNT(*) FROM users WHERE name=p_name) +
+  SELECT
+      (SELECT COUNT(*) FROM users WHERE name=p_name) +
         (SELECT COUNT(*) FROM users WHERE email=p_email)
-	INTO response;
+  INTO response;
 END$$
 
 DROP PROCEDURE IF EXISTS `get_apikey_from_name`$$
@@ -66,7 +67,7 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `get_apikey_from_name`(IN `p_name` V
     NO SQL
 BEGIN
 
-	SELECT `api_key` FROM `users` WHERE `name` = p_name INTO response;
+  SELECT `api_key` FROM `users` WHERE `name` = p_name INTO response;
 
 END$$
 
@@ -75,9 +76,9 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `get_last_upload_from_apikey`(IN `p_
     NO SQL
 BEGIN
 
-	DECLARE _id_user INT;
+  DECLARE _id_user INT;
     SELECT `id` FROM `users` WHERE `api_key` = p_apikey INTO _id_user;
-	SELECT `date` FROM `files` WHERE `id_user` = _id_user ORDER BY `date` DESC LIMIT 1 INTO response;
+  SELECT `date` FROM `files` WHERE `id_user` = _id_user ORDER BY `date` DESC LIMIT 1 INTO response;
 
 END$$
 
@@ -86,7 +87,7 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `get_password_from_name`(IN `p_name`
     NO SQL
 BEGIN
 
-	SELECT `password` FROM `users` WHERE `name` = p_name INTO response;
+  SELECT `password` FROM `users` WHERE `name` = p_name INTO response;
 
 END$$
 
@@ -95,17 +96,17 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `get_size_used_from_apikey`(IN `p_ap
     NO SQL
 BEGIN
 
-	SELECT size_used FROM users WHERE api_key=p_apikey INTO response;
+  SELECT size_used FROM users WHERE api_key=p_apikey INTO response;
 
 END$$
 
-DROP PROCEDURE IF EXISTS `get_stream_media_from_filename`$$
-CREATE DEFINER=`root`@`localhost` PROCEDURE `get_stream_media_from_filename`(IN `p_filename` VARCHAR(64), OUT `r_stream` LONGBLOB, OUT `r_media` VARCHAR(64))
+DROP PROCEDURE IF EXISTS `get_stream_media_date_size_from_filename`$$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `get_stream_media_date_size_from_filename`(IN `p_filename` VARCHAR(64), OUT `r_stream` LONGBLOB, OUT `r_media` VARCHAR(64), OUT `r_date` TIMESTAMP, OUT `r_size` BIGINT(11))
     NO SQL
 BEGIN
 
-	SELECT `stream` FROM `blobs` WHERE `id` = (SELECT `id_blob` FROM `files` WHERE `file_name` = p_filename) INTO r_stream;
-    SELECT `media_type` FROM `files` WHERE `file_name` = p_filename INTO r_media;
+  SELECT `stream` FROM `blobs` WHERE `id` = (SELECT `id_blob` FROM `files` WHERE `file_name` = p_filename) INTO r_stream;
+    SELECT `media_type`, `date`, `size` FROM `files` WHERE `file_name` = p_filename INTO r_media, r_date, r_size;
 
 END$$
 
@@ -114,7 +115,7 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `get_total_size_used`(OUT `response`
     NO SQL
 BEGIN
 
-	SELECT SUM(size_used) FROM users INTO response;
+  SELECT SUM(size_used) FROM users INTO response;
 
 END$$
 
@@ -123,7 +124,7 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `is_allowed`(IN `p_apikey` VARCHAR(2
     NO SQL
 BEGIN
 
-	SELECT `allowed` FROM `users` WHERE `api_key` = p_apikey INTO response;
+  SELECT `allowed` FROM `users` WHERE `api_key` = p_apikey INTO response;
 
 END$$
 
@@ -139,7 +140,7 @@ BEGIN
     SELECT COUNT(*) FROM `blobs` WHERE `hash`=p_hash INTO file_exists;
     
     IF file_exists = 0 THEN
-    	INSERT INTO `blobs`(`stream`, `hash`) VALUES(p_stream, p_hash);
+      INSERT INTO `blobs`(`stream`, `hash`) VALUES(p_stream, p_hash);
     END IF;
     
     SELECT `id` FROM `blobs` WHERE `hash`=p_hash INTO _tmp_id_blob;
@@ -208,7 +209,7 @@ CREATE TABLE IF NOT EXISTS `users` (
   `file_number` int(11) unsigned NOT NULL,
   `size_used` bigint(20) unsigned NOT NULL,
   `allowed` tinyint(1) NOT NULL
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
 
 --
 -- Indexes for dumped tables
@@ -250,7 +251,7 @@ MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=20;
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=4;
+MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=3;
 --
 -- Constraints for dumped tables
 --

@@ -4,7 +4,7 @@
 require __DIR__.'/api_actions.php';
 
 /**
- * PUT request
+ * POST request
  * Post a file
  * Content-type : multipart/form-data
  * Parameters : file, apikey

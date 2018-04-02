@@ -8,9 +8,9 @@ First of all, install the website with these commands
 git clone https://github.com/JamesMcAvoy/File-sharing-website.git
 composer install
 ```
+Change the config.json file and the index as you want.<br />
 Since you can not change the ```upload_max_filesize``` parameter directly in the config file/script, you have to be sure that the value of ```"uploadMaxSize"``` is smaller than ```upload_max_filesize``` on your php.ini file (by default 2MB). <br />
-Then, run the database creation script.<br />
-Change the config.json file and the index as you want.
+Then, run the database creation script.
 
 ## Dependencies
 * PHP>=7
@@ -23,6 +23,13 @@ Change the config.json file and the index as you want.
 * API for uploading, deleting, and more, files (see below)
 
 ## API
+* ```/api/upload```<br />
+  POST method<br />
+  Content-type : multipart/form-data<br />
+  Parameters :<br />
+  	file : your file to upload<br />
+  	apikey : your apikey
+
 
 ### To-do
 * Admin page

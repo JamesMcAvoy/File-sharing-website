@@ -179,12 +179,14 @@ function upload($db, $stream, $hash, $apikey, $filename, $mediaType, $size) {
  */
 function getFile($db, $filename) {
 
-	$req = $db->prepare('CALL  get_stream_media_from_filename(:filename, @r_stream, @r_media)');
+	$req = $db->prepare('CALL  get_stream_media_date_size_from_filename(:filename, @r_stream, @r_media, @r_date, @r_size)');
 	$req->bindParam(':filename', $filename, PDO::PARAM_STR, 64);
 	$req->execute();
 	$req->closeCursor();
 	$stream = $db->query('SELECT @r_stream AS r_stream')->fetch(PDO::FETCH_ASSOC)['r_stream'];
 	$media = $db->query('SELECT @r_media AS r_media')->fetch(PDO::FETCH_ASSOC)['r_media'];
-	return [$stream, $media];
+	$date = $db->query('SELECT @r_date AS r_date')->fetch(PDO::FETCH_ASSOC)['r_date'];
+	$size = $db->query('SELECT @r_size AS r_size')->fetch(PDO::FETCH_ASSOC)['r_size'];
+	return [$stream, $media, $date, $size];
 
 }
