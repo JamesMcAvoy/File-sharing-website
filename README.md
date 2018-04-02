@@ -4,14 +4,16 @@ This is a file sharing website.<br />
 <img src="https://i.imgur.com/YwXKhIb.png" />
 
 ## How to run it
-First of all, install the website with these commands
-```
-git clone https://github.com/JamesMcAvoy/File-sharing-website.git
-composer install
-```
-Change the parameters in the config.json file and in the index.php file (in the public folder) as you want.<br />
-Since you cannot change the ```upload_max_filesize``` parameter directly in the config file/script, you have to be sure that the value of ```"uploadMaxSize"``` is smaller than ```upload_max_filesize``` on your php.ini file (by default 2MB). <br />
-Then, run the database creation script.
+* First of all, install the website with these commands
+  ```
+  git clone https://github.com/JamesMcAvoy/File-sharing-website.git
+  composer install
+  ```
+* Change the parameters in the config.json file and in the index.php file (in the public folder) as you want.
+  Since you cannot change the ```upload_max_filesize``` parameter directly in the config file/script, you have to be sure that the value of ```"uploadMaxSize"``` is smaller than ```upload_max_filesize``` on your php.ini file (by default 2MB).
+* Add a public and a private recaptcha key.
+* Then, run the database creation script.
+* Also give the server permission to access to the folder, by editing the conf file and probably by doing ```sudo chown www-data /path/to/site```
 
 ## Dependencies
 * PHP>=7
