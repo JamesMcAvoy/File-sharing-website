@@ -71,6 +71,15 @@ BEGIN
 
 END$$
 
+DROP PROCEDURE IF EXISTS `get_infos_user`$$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `get_infos_user`(IN `p_apikey` VARCHAR(256), OUT `r_size_used` BIGINT(20), OUT `r_file_number` INT(11))
+    NO SQL
+BEGIN
+
+  SELECT `size_used`, `file_number` FROM `users` WHERE `api_key` = p_apikey INTO r_size_used, r_file_number;
+
+END$$
+
 DROP PROCEDURE IF EXISTS `get_last_upload_from_apikey`$$
 CREATE DEFINER=`root`@`localhost` PROCEDURE `get_last_upload_from_apikey`(IN `p_apikey` VARCHAR(256), OUT `response` TIMESTAMP)
     NO SQL
@@ -119,6 +128,15 @@ BEGIN
 
 END$$
 
+DROP PROCEDURE IF EXISTS `get_uploads_list_from_apikey_offset`$$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `get_uploads_list_from_apikey_offset`(IN `p_apikey` VARCHAR(256), IN `p_offset` INT(11), IN `p_limit` INT(11))
+    NO SQL
+BEGIN
+
+  SELECT `origin_name`, `file_name`, `media_type`, `date` FROM `files` WHERE `id_user` = (SELECT `id` FROM `users` WHERE `api_key` = p_apikey) ORDER BY `date` DESC LIMIT p_limit OFFSET p_offset;
+
+END$$
+
 DROP PROCEDURE IF EXISTS `is_allowed`$$
 CREATE DEFINER=`root`@`localhost` PROCEDURE `is_allowed`(IN `p_apikey` VARCHAR(256), OUT `response` INT(11))
     NO SQL
@@ -129,7 +147,7 @@ BEGIN
 END$$
 
 DROP PROCEDURE IF EXISTS `upload_file`$$
-CREATE DEFINER=`root`@`localhost` PROCEDURE `upload_file`(IN `p_stream` LONGBLOB, IN `p_hash` VARCHAR(128), IN `p_apikey` VARCHAR(256), IN `p_filename` VARCHAR(64), IN `p_mediatype` VARCHAR(64), IN `p_size` BIGINT(11) UNSIGNED)
+CREATE DEFINER=`root`@`localhost` PROCEDURE `upload_file`(IN `p_stream` LONGBLOB, IN `p_hash` VARCHAR(128), IN `p_apikey` VARCHAR(256), IN `p_filename` VARCHAR(64), IN `p_mediatype` VARCHAR(64), IN `p_size` BIGINT(11) UNSIGNED, IN `p_originname` VARCHAR(64))
     NO SQL
 BEGIN
 
@@ -146,7 +164,7 @@ BEGIN
     SELECT `id` FROM `blobs` WHERE `hash`=p_hash INTO _tmp_id_blob;
     SELECT `id` FROM `users` WHERE `api_key`=p_apikey INTO _tmp_id_user;
     
-    INSERT INTO `files`(`id_user`, `id_blob`, `file_name`, `media_type`, `size`, `important`) VALUES(_tmp_id_user, _tmp_id_blob, p_filename, p_mediatype, p_size, 0);
+    INSERT INTO `files`(`id_user`, `id_blob`, `origin_name`, `file_name`, `media_type`, `size`, `important`) VALUES(_tmp_id_user, _tmp_id_blob, p_originname, p_filename, p_mediatype, p_size, 0);
 
     UPDATE `users` SET `file_number` = `file_number`+1, `size_used` = `size_used`+p_size WHERE `id` = _tmp_id_user;
 
@@ -165,7 +183,7 @@ CREATE TABLE IF NOT EXISTS `blobs` (
 `id` int(11) NOT NULL,
   `stream` longblob NOT NULL,
   `hash` varchar(128) NOT NULL
-) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=54 DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
 
@@ -178,12 +196,13 @@ CREATE TABLE IF NOT EXISTS `files` (
 `id` int(11) NOT NULL,
   `id_user` int(11) NOT NULL,
   `id_blob` int(11) NOT NULL,
+  `origin_name` varchar(64) NOT NULL,
   `file_name` varchar(64) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
   `media_type` varchar(64) NOT NULL,
   `size` bigint(11) unsigned NOT NULL,
   `date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `important` tinyint(1) NOT NULL
-) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=83 DEFAULT CHARSET=latin1;
 
 --
 -- RELATIONS FOR TABLE `files`:
@@ -241,12 +260,12 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `blobs`
 --
 ALTER TABLE `blobs`
-MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=12;
+MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=54;
 --
 -- AUTO_INCREMENT for table `files`
 --
 ALTER TABLE `files`
-MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=20;
+MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=83;
 --
 -- AUTO_INCREMENT for table `users`
 --

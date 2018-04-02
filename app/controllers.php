@@ -46,6 +46,23 @@ function convertToBytes(String $value) {
 }
 
 /**
+ * Convert bytes to a standard notation
+ * @see https://stackoverflow.com/questions/2510434/format-bytes-to-kilobytes-megabytes-gigabytes
+ */
+function convertToNotation(int $bytes) {
+
+	$units = array('B', 'KB', 'MB', 'GB', 'TB'); 
+
+	$bytes = max($bytes, 0); 
+	$pow = floor(($bytes ? log($bytes) : 0) / log(1024)); 
+	$pow = min($pow, count($units) - 1);
+	$bytes /= pow(1024, $pow);
+
+    return round($bytes, 2).$units[$pow]; 
+
+}
+
+/**
  * Generate an api key
  */
 function createToken() {
@@ -125,12 +142,15 @@ function indexController($req, $res, $config) {
 	}
 
 	if(!empty($session[$config['cookieName']]) && apikeyExists($db, $session[$config['cookieName']])) {
+		list($size, $number) = getInfosUser($db, $session[$config['cookieName']]);
 		return render('user.php', $res, array_merge(
 				$config,
 				[
 					'path' => $req->getRequestTarget(),
 					'logged' => true,
-					'cookie' => $session[$config['cookieName']]
+					'cookie' => $session[$config['cookieName']],
+					'size' => convertToNotation($size),
+					'number' => $number
 				]
 			)
 		);

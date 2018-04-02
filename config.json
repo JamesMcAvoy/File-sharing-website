@@ -1,6 +1,7 @@
 {
 	"websiteName": "File sharing website",
 	"cookieName": "syndedemenos",
+	"limitFilesPerPage": 24,
 
 	"recaptcha_public_key": "",
 	"recaptcha_private_key": "",

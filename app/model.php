@@ -160,15 +160,16 @@ function createAccount($db, $name, $email, $pass, $apikey) {
 /**
  * Upload a file
  */
-function upload($db, $stream, $hash, $apikey, $filename, $mediaType, $size) {
+function upload($db, $stream, $hash, $apikey, $filename, $mediaType, $size, $name) {
 
-	$req = $db->prepare('CALL upload_file(:stream, :hash, :apikey, :filename, :mediaType, :size)');
+	$req = $db->prepare('CALL upload_file(:stream, :hash, :apikey, :filename, :mediaType, :size, :name)');
 	$req->bindParam(':stream', $stream, PDO::PARAM_LOB);
 	$req->bindParam(':hash', $hash, PDO::PARAM_STR, 128);
 	$req->bindParam(':apikey', $apikey, PDO::PARAM_STR, 256);
 	$req->bindParam(':filename', $filename, PDO::PARAM_STR, 64);
 	$req->bindParam(':mediaType', $mediaType, PDO::PARAM_STR, 64);
 	$req->bindParam(':size', $size, PDO::PARAM_INT, 11);
+	$req->bindParam(':name', $name, PDO::PARAM_STR, 64);
 	$req->execute();
 	$req->closeCursor();
 
@@ -188,5 +189,47 @@ function getFile($db, $filename) {
 	$date = $db->query('SELECT @r_date AS r_date')->fetch(PDO::FETCH_ASSOC)['r_date'];
 	$size = $db->query('SELECT @r_size AS r_size')->fetch(PDO::FETCH_ASSOC)['r_size'];
 	return [$stream, $media, $date, $size];
+
+}
+
+/**
+ * Return infos from a user (size used/files uploaded)
+ */
+function getInfosUser($db, $apikey) {
+
+	$req = $db->prepare('CALL get_infos_user(:apikey, @r_size, @r_number)');
+	$req->bindParam(':apikey', $apikey, PDO::PARAM_STR, 256);
+	$req->execute();
+	$req->closeCursor();
+	$size = $db->query('SELECT @r_size AS r_size')->fetch(PDO::FETCH_ASSOC)['r_size'];
+	$number = $db->query('SELECT @r_number AS r_number')->fetch(PDO::FETCH_ASSOC)['r_number'];
+	return [$size, $number]; 
+
+}
+
+/**
+ * Return file list from offset
+ */
+function getUploads($db, $apikey, $offset, $limit) {
+
+	$req = $db->prepare('CALL get_uploads_list_from_apikey_offset(:apikey, :offset, :limit)');
+	$req->bindParam(':apikey', $apikey, PDO::PARAM_STR, 256);
+	$req->bindParam(':offset', $offset, PDO::PARAM_INT, 11);
+	$req->bindParam(':limit', $limit, PDO::PARAM_INT, 11);
+	$req->execute();
+	$tmp = $req->fetchAll(PDO::FETCH_ASSOC);
+	$req->closeCursor();
+	$return = [];
+
+	foreach($tmp as $key => $value) {
+		$return[$key] = array(
+			'origin' => htmlentities($value['origin_name']),
+			'filename' => $value['file_name'],
+			'mediatype' => $value['media_type'],
+			'timestamp' => strtotime($value['date'])
+		);
+	}
+
+	return $return;
 
 }

@@ -85,6 +85,29 @@ $(() => {
 	});
 
 	/**
+	 * Copy API key
+	 */
+	$('.apikey-copy').click(function() {
+		var textArea = document.createElement('textarea');
+		textArea.style.position = 'fixed';
+		textArea.style.top = 0;
+		textArea.style.left = 0;
+		textArea.style.width = '2em';
+		textArea.style.height = '2em';
+		textArea.style.padding = 0;
+		textArea.style.border = 'none';
+		textArea.style.outline = 'none';
+		textArea.style.boxShadow = 'none';
+		textArea.style.background = 'transparent';
+		textArea.value = $(this).text();
+		document.body.appendChild(textArea);
+		textArea.select();
+		document.execCommand("copy"); //copy
+		document.body.removeChild(textArea); //del textarea temp
+		$(this).fadeTo(50, 0.2).fadeTo(50, 1);
+	});
+
+	/**
 	 * Upload + drag system
 	 */
 	const upload = function(f) {
@@ -135,13 +158,21 @@ $(() => {
 		});
 	};
 
-	const removeUploadPopup = function() {
-		$('.info-upload').hide(250);
-		$('header, div.inner.cover, footer').css('filter', '');
-		$('#upload-name').empty();
-		$('#upload-msg').empty();
-		$('#upload-bar').css('display', 'none');
-		$('#upload-bar div').css('background-color', '#004600');
+	/**
+	 * Function for removing popup
+	 */
+	const removePopup = function(type = 'upload') {
+		if(type == 'upload') {
+			$('.info-upload').hide(250);
+			$('header, div.inner.cover, footer').css('filter', '');
+			$('#upload-name').empty();
+			$('#upload-msg').empty();
+			$('#upload-bar').css('display', 'none');
+			$('#upload-bar div').css('background-color', '#004600');
+		} else if(type == 'infos') {
+			$('.infos-user').hide(250);
+			$('header, div.inner.cover, footer').css('filter', '');
+		}
 	};
 
 	$('#upload-display').on('click', (e) => {
@@ -150,14 +181,31 @@ $(() => {
 		return false;
 	});
 
-	$('#close').on('click', (e) => {
-		removeUploadPopup();
+	$('#close-upload').on('click', (e) => {
+		removePopup();
+	});
+
+	//Infos display
+	$('#infos-user-display').on('click', (e) => {
+		$('.infos-user').show(250);
+		$('header, div.inner.cover, footer').css('filter', 'blur(5px)');
+		return false;
+	});
+
+	$('#close-infos').on('click', (e) => {
+		removePopup('infos');
 	});
 
 	$(document).on('click', (e) => { 
 		if(!$(e.target).closest('.info-upload').length) {
 			if($('.info-upload').is(":visible")) {
-				removeUploadPopup();
+				removePopup();
+			}
+		}
+
+		if(!$(e.target).closest('.infos-user').length) {
+			if($('.infos-user').is(":visible")) {
+				removePopup('infos');
 			}
 		}
 	});
@@ -195,5 +243,81 @@ $(() => {
 		//Upload
 		upload($('#inputFile')[0].files[0]);
 	});
+
+	/**
+	 * Requesting new API key
+	 */
+	$('#reset-apikey').on('click', (e) => {
+		e.preventDefault();
+	});
+
+	/**
+	 * Reseting pass
+	 */
+	$('#reset-password').on('click', (e) => {
+		e.preventDefault();
+	});
+
+	/**
+	 * Update the user page and reload all files
+	 */
+	const update = function(offset) {
+		var apikey = $('#cookie').val();
+		if(apikey === '')  {
+			alert('Error : apikey not found');
+			return;
+		}
+
+		$.get('/api/getUploads', {apikey: apikey, offset: offset}, (data) => {
+			if(!data.success) {
+				console.log(data.msg);
+				alert(data.msg);
+				return;
+			}
+			data.msg.forEach((f) => {
+				let str = '<div class="file" id="'+f.filename+'">';
+
+				if(f.mediatype.startsWith('image'))
+					str += '<img class="fileImage" src="/'+f.filename+'" />';
+
+				if(f.origin.length > 25)
+					str += '<span clas="fileName">'+f.origin.substring(0, 22)+'...</span><div class="fileFooter"><div>';
+				else
+					str += '<span clas="fileName">'+f.origin+'</span><div class="fileFooter"><span>';
+
+				str += '<a href="/'+f.filename+'">'+f.filename+'</a></span>';
+				str += '<span> - </span><span><a href="#" class="get-infos-user">infos</a></span></div></div>';
+
+				$('#uploads').append(str);
+			});
+		});
+	};
+
+	//If user connected to the upload page
+	if($('div.inner.cover').hasClass('logged')) {
+		//Initialisation
+		//let filesPerPage
+		//let page
+		//let total
+		if(total == 0) {
+			$('#start').text(0);
+			$('#end').text(0);
+			$('#total').text(0);
+			$('#each').text(filesPerPage);
+		} else if(total < filesPerPage) {
+			$('#start').text(1);
+			$('#end').text(total);
+			$('#total').text(total);
+			$('#each').text(filesPerPage);
+		} else {
+			$('#start').text(1);
+			$('#end').text(filesPerPage);
+			$('#total').text(total);
+			$('#each').text(filesPerPage);
+		}
+		$('#act .pageInput').val(1);
+
+		update(page);
+	}
 
 });

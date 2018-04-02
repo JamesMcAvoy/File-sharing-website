@@ -1,6 +1,7 @@
 # File sharing website
-This is a file sharing website.
-<img src="https://i.imgur.com/3a9k0c2.png" />
+This is a file sharing website.<br />
+
+<img src="https://i.imgur.com/YwXKhIb.png" />
 
 ## How to run it
 First of all, install the website with these commands
@@ -8,7 +9,7 @@ First of all, install the website with these commands
 git clone https://github.com/JamesMcAvoy/File-sharing-website.git
 composer install
 ```
-Change the config.json file and the index as you want.<br />
+Change the parameters in the config.json file and in the index.php file (in the public folder) as you want.<br />
 Since you cannot change the ```upload_max_filesize``` parameter directly in the config file/script, you have to be sure that the value of ```"uploadMaxSize"``` is smaller than ```upload_max_filesize``` on your php.ini file (by default 2MB). <br />
 Then, run the database creation script.
 
@@ -21,6 +22,7 @@ Then, run the database creation script.
 * Per account upload limit
 * Files are hashed to detect identical files. A blob is created for every file uploaded, if two identical files are uploaded, the file created in the database will link to the same blob.
 * File caching from database
+* Progress bar when file uploading
 * API for uploading, deleting, and more, files (see below)
 
 ## API
@@ -32,8 +34,20 @@ Then, run the database creation script.
 	* apikey : your apikey
 
   Example : <img src="https://i.imgur.com/oMpjKpt.png" width="450" />
+* ```/api/getUploads```<br />
+  GET method<br />
+  Parameters :
+	* file : your file to upload
+	* offset : the index to get your files
+
+  Example : /api/getUploads?apikey=yourapikey&offset=1
 
 ### To-do
 * Admin page
 * Delete auto files
 * Mark as important your files
+* Reset API key/password
+* Encode blobs to prevent hack from DB
+* Info popup
+* Search for a file
+* Adding an icon for a file according to its mime type
