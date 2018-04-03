@@ -66,7 +66,7 @@ function convertToNotation(int $bytes) {
  * Generate an api key
  */
 function createToken() {
-	return str_replace('+', 'a', base64_encode(openssl_random_pseudo_bytes(64)));
+	return bin2hex(openssl_random_pseudo_bytes(32));
 }
 
 /**

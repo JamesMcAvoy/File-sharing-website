@@ -18,9 +18,9 @@
 				</div>
 
 				<script>
-					let filesPerPage = <?= $limitFilesPerPage ?>;
-					let page = 1;
-					let total = <?= $number ?>;
+					filesPerPage = <?= $limitFilesPerPage ?>;
+					page = 1;
+					total = <?= $number ?>;
 				</script>
 
 				<p class="lead">

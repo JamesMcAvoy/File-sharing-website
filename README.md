@@ -1,9 +1,14 @@
 # File sharing website
 A file sharing website written in PHP. You can find it here : https://pleaserape.me/<br />
 
+- [Getting started](#how-to-install-it)
+- [Dependencies](#dependencies)
+- [Features](#some-cool-features)
+- [API](#api)
+
 <img src="https://i.imgur.com/YwXKhIb.png" />
 
-## How to run it
+## How to install it
 * First of all, install the website with these commands
   ```
   git clone https://github.com/JamesMcAvoy/File-sharing-website.git
@@ -49,7 +54,5 @@ A file sharing website written in PHP. You can find it here : https://pleaserape
 * Delete auto files
 * Mark as important your files
 * Reset API key/password
-* Encode blobs to prevent hack from DB
 * Info popup
 * Search for a file
-* Adding an icon for a file according to its mime type

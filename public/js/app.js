@@ -55,6 +55,160 @@ $(() => {
 	};
 
 	/**
+	 * Update the user page and reload all files (get uploaded)
+	 */
+	const update = function(offset) {
+		var apikey = $('#cookie').val();
+		if(apikey === '')  {
+			alert('Error : apikey not found');
+			return;
+		}
+
+		//Changing CSS if <> 6 files on page
+		if(total - ((page-1)*filesPerPage+1) > 5)
+			$('html, css').css('min-height', '100vh').css('height', 'auto');
+		else
+			$('html, css').css('min-height', 'none').css('height', '100%');
+
+		$.get('/api/getUploads', {apikey: apikey, offset: offset}, (data) => {
+			if(!data.success) {
+				console.log(data.msg);
+				alert(data.msg);
+				return;
+			}
+			$('#uploads').empty();
+			data.msg.forEach((f) => {
+				let str = '<div class="file" id="'+f.filename+'">';
+
+				if(f.mediatype.startsWith('image'))
+					str += '<img class="fileImage" src="/'+f.filename+'" />';
+
+				else if(f.mediatype.startsWith('video'))
+					str += '<video class="fileVideo" src="/'+f.filename+'" controls></video>';
+
+				else if(f.mediatype.startsWith('audio'))
+					str += '<img class="fileAudio" src="/img/icon-audio.png" />';
+
+				else str += '<img class="fileDefault" src="/img/icon-file.png" />';
+
+				if(f.origin.length > 25)
+					str += '<span clas="fileName">'+f.origin.substring(0, 22)+'...</span><div class="fileFooter"><div>';
+				else
+					str += '<span clas="fileName">'+f.origin+'</span><div class="fileFooter"><span>';
+
+				str += '<a href="/'+f.filename+'">'+f.filename+'</a></span>';
+				str += '<span> - </span><span><a href="#" class="get-infos-user">infos</a></span></div></div>';
+
+				$('#uploads').append(str);
+			});
+		});
+	};
+
+	/**
+	 * Upload + drag system
+	 */
+	const upload = function(f) {
+		var apikey = $('#cookie').val();
+		if(apikey === '')  {
+			$('#upload-msg').text('Error : your apikey is empty.');
+			return;
+		}
+
+		(f.name.length < 50) ? $('#upload-name').text(f.name) : $('#upload-name').text(f.name.substring(0, 47) + '...');
+
+		var formData = new FormData();
+		formData.append('file', f);
+		formData.append('apikey', $('#cookie').val());
+
+		$.ajax({
+			url: '/api/upload',
+			type: 'POST',
+			enctype: 'multipart/form',
+			data: formData,
+			dataType: 'json',
+			processData: false,
+			contentType: false,
+			cache: false,
+			beforeSend: () => {
+				$('#upload-bar').css('display', 'inline-block');
+				$('#upload-bar div').css('width', '0%').text('0%').css('background-color', '#004600');
+			},
+			xhr: () => {
+				var xhr = $.ajaxSettings.xhr();
+				xhr.upload.onprogress = (e) => {
+					if(e.lengthComputable) {
+						let percent = Math.round((e.loaded/e.total)*1000)/10;
+						$('#upload-bar div').css('width', percent+'%').text(percent+'%');
+					}
+				};
+				return xhr;
+			},
+			error: (e) => {
+				console.log(e.statusText);
+				$('#upload-bar div').css('background-color', '#990000');
+			},
+			complete: (data) => {
+				$('#upload-bar div').css('width', '100%').text('100%');
+				if(data.responseJSON.success) {
+					$('#upload-msg').html('<a href="/'+data.responseJSON.msg+'">'+data.responseJSON.msg+'</a>');
+					//add one file
+					total++;
+					$('#total').text(total);
+				} else $('#upload-msg').text(data.responseJSON.msg);
+			}
+		});
+
+		//Finally upload the page
+		setTimeout(function() {
+			update(page);
+		}, 200);
+	};
+
+	/**
+	 * Function for removing popup
+	 */
+	const removePopup = function(type = 'upload') {
+		if(type == 'upload') {
+			$('.info-upload').hide(250);
+			$('header, div.inner.cover, footer').css('filter', '');
+			$('#upload-name').empty();
+			$('#upload-msg').empty();
+			$('#upload-bar').css('display', 'none');
+			$('#upload-bar div').css('background-color', '#004600');
+		} else if(type == 'infos') {
+			$('.infos-user').hide(250);
+			$('header, div.inner.cover, footer').css('filter', '');
+		}
+	};
+
+	//If user connected to the upload page
+	if($('div.inner.cover').hasClass('logged')) {
+		//Initialisation; global vars :
+		//filesPerPage
+		//page
+		//total
+		if(total == 0) {
+			$('#start').text(0);
+			$('#end').text(0);
+			$('#total').text(0);
+			$('#each').text(filesPerPage);
+		} else if(total < filesPerPage) {
+			$('#start').text(1);
+			$('#end').text(total);
+			$('#total').text(total);
+			$('#each').text(filesPerPage);
+		} else {
+			$('#start').text(1);
+			$('#end').text(filesPerPage);
+			$('#total').text(total);
+			$('#each').text(filesPerPage);
+		}
+		$('#act .pageInput').val(1);
+
+		update(page);
+	}
+
+	/**
 	 * shitposting
 	 */
 	$('.shake-error').on('mouseover', (e) => {
@@ -106,74 +260,6 @@ $(() => {
 		document.body.removeChild(textArea); //del textarea temp
 		$(this).fadeTo(50, 0.2).fadeTo(50, 1);
 	});
-
-	/**
-	 * Upload + drag system
-	 */
-	const upload = function(f) {
-		var apikey = $('#cookie').val();
-		if(apikey === '')  {
-			$('#upload-msg').text('Error : your apikey is empty.');
-			return;
-		}
-
-		(f.name.length < 50) ? $('#upload-name').text(f.name) : $('#upload-name').text(f.name.substring(0, 47) + '...');
-
-		var formData = new FormData();
-		formData.append('file', f);
-		formData.append('apikey', $('#cookie').val());
-
-		$.ajax({
-			url: '/api/upload',
-			type: 'POST',
-			enctype: 'multipart/form',
-			data: formData,
-			dataType: 'json',
-			processData: false,
-			contentType: false,
-			cache: false,
-			beforeSend: () => {
-				$('#upload-bar').css('display', 'inline-block');
-				$('#upload-bar div').css('width', '0%').text('0%').css('background-color', '#004600');
-			},
-			xhr: () => {
-				var xhr = $.ajaxSettings.xhr();
-				xhr.upload.onprogress = (e) => {
-					if(e.lengthComputable) {
-						let percent = Math.round((e.loaded/e.total)*1000)/10;
-						$('#upload-bar div').css('width', percent+'%').text(percent+'%');
-					}
-				};
-				return xhr;
-			},
-			error: (e) => {
-				console.log(e.statusText);
-				$('#upload-bar div').css('background-color', '#990000');
-			},
-			complete: (data) => {
-				$('#upload-bar div').css('width', '100%').text('100%');
-				if(data.responseJSON.success) $('#upload-msg').html('<a href="/'+data.responseJSON.msg+'">'+data.responseJSON.msg+'</a>');
-				else $('#upload-msg').text(data.responseJSON.msg);
-			}
-		});
-	};
-
-	/**
-	 * Function for removing popup
-	 */
-	const removePopup = function(type = 'upload') {
-		if(type == 'upload') {
-			$('.info-upload').hide(250);
-			$('header, div.inner.cover, footer').css('filter', '');
-			$('#upload-name').empty();
-			$('#upload-msg').empty();
-			$('#upload-bar').css('display', 'none');
-			$('#upload-bar div').css('background-color', '#004600');
-		} else if(type == 'infos') {
-			$('.infos-user').hide(250);
-			$('header, div.inner.cover, footer').css('filter', '');
-		}
-	};
 
 	$('#upload-display').on('click', (e) => {
 		$('.info-upload').show(250);
@@ -245,6 +331,55 @@ $(() => {
 	});
 
 	/**
+	 * Pagination
+	 */
+	$(document).on('click', '.clickable', function() {
+		let tmp = page;
+		if($(this).attr('id')==='first' && page > 1) tmp = 1;
+		if($(this).attr('id')==='prev' && page > 1) tmp--;
+		if($(this).attr('id')==='next' && page < Math.ceil(total/filesPerPage)) tmp++;
+		if($(this).attr('id')==='last' && page < Math.ceil(total/filesPerPage)) tmp = Math.ceil(total/filesPerPage);
+		if(tmp != page) {
+			page = tmp;
+			update(page);
+			$('#start').text((page-1)*filesPerPage+1);
+			if(page*filesPerPage<total)
+				$('#end').text(page*filesPerPage);
+			else
+				$('#end').text(total);
+			$('#total').text(total);
+			$('#each').text(filesPerPage);
+			$('#act .pageInput').val(page);
+		}
+	});
+
+	$('#pageInput').on('click', function() {
+		$(this).val('');
+	});
+
+	$('#pageInput').keydown(function(e) {
+		if(e.key.match(/\D/)) e.preventDefault();
+		if(e.keyCode === 13) {
+			$(this).blur();
+			if($(this).val() == '') $(this).val(page);
+			let tmp = $('#pageInput').val();
+
+			if(tmp != page && tmp >= 1 && tmp <= Math.ceil(total/filesPerPage)) {
+				page = tmp;
+				update(page);
+				$('#start').text((page-1)*filesPerPage+1);
+				if(page*filesPerPage<total)
+					$('#end').text(page*filesPerPage);
+				else
+					$('#end').text(total);
+				$('#total').text(total);
+				$('#each').text(filesPerPage);
+				$('#act .pageInput').val(page);
+			}
+		}
+	});//end pagination block
+
+	/**
 	 * Requesting new API key
 	 */
 	$('#reset-apikey').on('click', (e) => {
@@ -257,67 +392,5 @@ $(() => {
 	$('#reset-password').on('click', (e) => {
 		e.preventDefault();
 	});
-
-	/**
-	 * Update the user page and reload all files
-	 */
-	const update = function(offset) {
-		var apikey = $('#cookie').val();
-		if(apikey === '')  {
-			alert('Error : apikey not found');
-			return;
-		}
-
-		$.get('/api/getUploads', {apikey: apikey, offset: offset}, (data) => {
-			if(!data.success) {
-				console.log(data.msg);
-				alert(data.msg);
-				return;
-			}
-			data.msg.forEach((f) => {
-				let str = '<div class="file" id="'+f.filename+'">';
-
-				if(f.mediatype.startsWith('image'))
-					str += '<img class="fileImage" src="/'+f.filename+'" />';
-
-				if(f.origin.length > 25)
-					str += '<span clas="fileName">'+f.origin.substring(0, 22)+'...</span><div class="fileFooter"><div>';
-				else
-					str += '<span clas="fileName">'+f.origin+'</span><div class="fileFooter"><span>';
-
-				str += '<a href="/'+f.filename+'">'+f.filename+'</a></span>';
-				str += '<span> - </span><span><a href="#" class="get-infos-user">infos</a></span></div></div>';
-
-				$('#uploads').append(str);
-			});
-		});
-	};
-
-	//If user connected to the upload page
-	if($('div.inner.cover').hasClass('logged')) {
-		//Initialisation
-		//let filesPerPage
-		//let page
-		//let total
-		if(total == 0) {
-			$('#start').text(0);
-			$('#end').text(0);
-			$('#total').text(0);
-			$('#each').text(filesPerPage);
-		} else if(total < filesPerPage) {
-			$('#start').text(1);
-			$('#end').text(total);
-			$('#total').text(total);
-			$('#each').text(filesPerPage);
-		} else {
-			$('#start').text(1);
-			$('#end').text(filesPerPage);
-			$('#total').text(total);
-			$('#each').text(filesPerPage);
-		}
-		$('#act .pageInput').val(1);
-
-		update(page);
-	}
 
 });
