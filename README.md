@@ -31,26 +31,23 @@ A file sharing website written in PHP. You can find it here : https://pleaserape
 * API for uploading, deleting, and more, files (see below)
 
 ## API
-* ```/api/upload```<br />
+* POST ```/api/upload```<br />
   Upload a file<br />
-  POST method<br />
   Content-type : multipart/form-data<br />
   Parameters :
 	* file : your file to upload
 	* apikey : your apikey
 
   Example : <img src="https://i.imgur.com/oMpjKpt.png" width="450" />
-* ```/api/getUploads```<br />
+* GET ```/api/getUploads```<br />
   Return a list of files uploaded<br />
-  GET method<br />
   Parameters :
 	* offset : the index to get your files
 	* A cookie header named from your config.json with your API key
 
   Example : /api/getUploads?offset=1
-* ```/api/getInfos```<br />
+* GET ```/api/getInfos```<br />
   Return infos on user<br />
-  GET method<br />
   Parameters :
 	* A cookie header named from your config.json with your API key
 
