@@ -21,8 +21,8 @@ use Zend\Diactoros\ServerRequestFactory as Request,
 	Zend\Diactoros\Response as Response,
 	Zend\Diactoros\Response\SapiEmitter as Emitter;
 
-require __DIR__.'/../vendor/autoload.php';
-require __DIR__.'/../app/routing.php';
+require_once __DIR__.'/../vendor/autoload.php';
+require_once __DIR__.'/../app/routing.php';
 
 (new Emitter())->emit($app->run(
 	Request::fromGlobals(

@@ -153,7 +153,7 @@ input[type="password"], input[type="text"], input[type="email"] {
 	-webkit-align-items: center;
 	align-items: center;
 	margin: 1.5rem -1.5rem;
-	max-height: 34em;
+	max-height: 33em;
 	overflow: auto;
 }
 
@@ -207,6 +207,7 @@ input[type="password"], input[type="text"], input[type="email"] {
 }
 
 .infos-user,
+.infos-file,
 .info-upload {
 	position: absolute;
 	top: 50%;
@@ -325,11 +326,12 @@ input[type="password"], input[type="text"], input[type="email"] {
 	margin-bottom: 5px;
 }
 
-.infos-user {
+.infos-user,
+.infos-file {
 	background-color: #141414;
 	border-radius: 2px;
 	padding: 15px;
-	max-width: 700px;
+	width: 700px;
 }
 
 .infos-user p {
@@ -411,22 +413,11 @@ input[type="password"], input[type="text"], input[type="email"] {
 	#upload-msg {
 		position: static;
 	}
-	.infos-user p {
-		padding: 0 10px;
-	}
-	.inForm {
-		padding-left: 30px;
-	}
-	.inFormInput {
-		padding-right: 0;
+	.infos-user {
+		width: 90%;
 	}
 }
 
-@media (max-width: 40em) {
-	.inForm {
-		padding-left: 0;
-	}
-}
 
 @media (min-width: 48em) {
 	.masthead-brand {

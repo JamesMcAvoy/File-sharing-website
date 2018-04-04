@@ -7,7 +7,7 @@
 use PsrRouter\PsrRouter as Router;
 
 //controllers functions
-require __DIR__.'/controllers.php';
+require_once __DIR__.'/controllers.php';
 
 $app = new Router();
 
@@ -93,7 +93,7 @@ $app->get('/{file}', function($req, $res, $slug) use($config) {
 
 	return getFileController($req, $res, array_merge($config, ['file' => $slug['file']]));
 
-})->regex('/.{6,10}/');
+})->regex('/[a-zA-Z0-9.]{6,10}/');
 
 //API routes included
-require __DIR__.'/api/api_routes.php';
+require_once __DIR__.'/api/api_routes.php';

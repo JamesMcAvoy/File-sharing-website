@@ -49,13 +49,16 @@
 				</div>
 			</div>
 
+			<div class="infos-file" style="display: none">
+			</div>
+
 			<div class="infos-user" style="display: none">
 				<i class="fa fa-close" id="close-infos"></i>
 				<p>
 					Size limit : <?= $accountMaxSize ?><br />
 					Limit per upload : <?= $uploadMaxSize ?><br />
-					Current size used : <?= $size ?><br />
-					Files uploaded : <?= $number ?><br />
+					Current size used : <span id="size-used"><?= $size ?></span><br />
+					Files uploaded : <span id="files-uploaded"><?= $number ?></span><br />
 					Your API key : <code class="apikey-copy"><?= $cookie ?></code> (click to copy)
 				</p>
 				<button id="reset-apikey" class="btn btn-md btn-secondary">Reset API key (working on)</button>

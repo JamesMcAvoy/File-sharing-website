@@ -224,7 +224,7 @@ function getUploads($db, $apikey, $offset, $limit) {
 	foreach($tmp as $key => $value) {
 		$return[$key] = array(
 			'origin' => htmlentities($value['origin_name']),
-			'filename' => $value['file_name'],
+			'filename' => htmlentities($value['file_name']),
 			'mediatype' => $value['media_type'],
 			'timestamp' => strtotime($value['date'])
 		);

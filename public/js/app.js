@@ -58,19 +58,13 @@ $(() => {
 	 * Update the user page and reload all files (get uploaded)
 	 */
 	const update = function(offset) {
-		var apikey = $('#cookie').val();
-		if(apikey === '')  {
-			alert('Error : apikey not found');
-			return;
-		}
-
 		//Changing CSS if <> 6 files on page
 		if(total - ((page-1)*filesPerPage+1) > 5)
-			$('html, css').css('min-height', '100vh').css('height', 'auto');
+			$('html, body').css('min-height', '100vh').css('height', 'auto');
 		else
-			$('html, css').css('min-height', 'none').css('height', '100%');
+			$('html, body').css('min-height', 'none').css('height', '100%');
 
-		$.get('/api/getUploads', {apikey: apikey, offset: offset}, (data) => {
+		$.get('/api/getUploads', {offset: offset}, (data) => {
 			if(!data.success) {
 				console.log(data.msg);
 				alert(data.msg);
@@ -96,8 +90,8 @@ $(() => {
 				else
 					str += '<span clas="fileName">'+f.origin+'</span><div class="fileFooter"><span>';
 
-				str += '<a href="/'+f.filename+'">'+f.filename+'</a></span>';
-				str += '<span> - </span><span><a href="#" class="get-infos-user">infos</a></span></div></div>';
+				str += '<a href="/'+f.filename+'" target="_blank">'+f.filename+'</a></span>';
+				str += '<span> - </span><span><a href="#" class="get-infos-file">infos</a></span></div></div>';
 
 				$('#uploads').append(str);
 			});
@@ -155,6 +149,17 @@ $(() => {
 					total++;
 					$('#total').text(total);
 				} else $('#upload-msg').text(data.responseJSON.msg);
+
+				//Update size used and files uploaded in infos
+				$.get('/api/getInfos', (data) => {
+					if(!data.success) {
+						console.log(data.msg);
+						alert(data.msg);
+						return;
+					}
+					$('#size-used').text(data.msg.size);
+					$('#files-uploaded').text(data.msg.files);
+				});
 			}
 		});
 
@@ -378,6 +383,14 @@ $(() => {
 			}
 		}
 	});//end pagination block
+
+	/**
+	 * Display infobox file
+	 */
+	$(document).on('click', '.get-infos-file', function(e) {
+		e.preventDefault();
+		var file = $(this).parent().parent().parent().attr('id');
+	});
 
 	/**
 	 * Requesting new API key

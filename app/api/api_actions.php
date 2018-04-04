@@ -26,7 +26,7 @@ function apiUpload($req, $res, $config) {
 	if(is_string($db)) return apiError($res, 503, $db);
 
 	$apikey = $req->getParsedBody();
-	if(!(!empty($apikey['apikey']) && apikeyExists($db, $apikey['apikey'])))
+	if(empty($apikey['apikey']) || !apikeyExists($db, $apikey['apikey']))
 		return apiError($res, 400, 'Invalid apikey');
 	else $apikey = $apikey['apikey'];
 
@@ -96,6 +96,8 @@ function apiGetUploads($req, $res, $config) {
 
 	$params = $req->getQueryParams();
 	$session = $req->getCookieParams();
+	$db = connect($config);
+	if(is_string($db)) return apiError($res, 503, $db);
 
 	if(!isset($params['offset']))
 		return apiError($res, 400, 'Empty field offset');
@@ -108,9 +110,6 @@ function apiGetUploads($req, $res, $config) {
 	if($offset<0)
 		return apiError($res, 400, 'Invalid offset');
 
-	$db = connect($config);
-	if(is_string($db)) return apiError($res, 503, $db);
-
 	if($offset >= 1) $offset--;
 
 	$offset *= $config['limitFilesPerPage'];
@@ -122,6 +121,30 @@ function apiGetUploads($req, $res, $config) {
 	$body->write(json_encode(array(
 		'success' => true,
 		'msg'	  => $data
+	)));
+	
+	return $res->withBody($body)->withHeader('Content-Type', 'application/json');
+
+}
+
+/**
+ * GET API infos controller
+ */
+function apiGetInfos($req, $res, $config) {
+
+	$session = $req->getCookieParams();
+	$db = connect($config);
+	if(is_string($db)) return apiError($res, 503, $db);
+
+	if(empty($session[$config['cookieName']]) || !apikeyExists($db, $session[$config['cookieName']]))
+		return apiError($res, 400, 'Invalid apikey cookie.');
+
+	list($size, $number) = getInfosUser($db, $session[$config['cookieName']]);
+
+	$body = $res->getBody();
+	$body->write(json_encode(array(
+		'success' => true,
+		'msg'	  => ['size' => convertToNotation($size), 'files' => $number]
 	)));
 	
 	return $res->withBody($body)->withHeader('Content-Type', 'application/json');
