@@ -18,7 +18,8 @@ $app->post('/api/upload', function($req, $res) use($config) {
 /**
  * GET request
  * Return infos on files
- * Parameter : offset, apikey
+ * Parameter : offset
+ * Cookie header apikey
  */
 $app->get('/api/getUploads', function($req, $res) use($config) {
 

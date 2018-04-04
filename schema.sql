@@ -253,25 +253,6 @@ ALTER TABLE `users`
  ADD PRIMARY KEY (`id`);
 
 --
--- AUTO_INCREMENT for dumped tables
---
-
---
--- AUTO_INCREMENT for table `blobs`
---
-ALTER TABLE `blobs`
-MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=54;
---
--- AUTO_INCREMENT for table `files`
---
-ALTER TABLE `files`
-MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=83;
---
--- AUTO_INCREMENT for table `users`
---
-ALTER TABLE `users`
-MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=3;
---
 -- Constraints for dumped tables
 --
 

@@ -1,12 +1,16 @@
 # File sharing website
 A file sharing website written in PHP. You can find it here : https://pleaserape.me/<br />
+<img src="https://i.imgur.com/YwXKhIb.png" />
 
-- [Getting started](#how-to-install-it)
-- [Dependencies](#dependencies)
+- [Requirements](#requirements)
+- [Installation](#how-to-install-it)
 - [Features](#some-cool-features)
 - [API](#api)
 
-<img src="https://i.imgur.com/YwXKhIb.png" />
+## Requirements
+* A web server (developped with Apache, you will find a .htaccess file), make sure you have your "rewrite engine" on
+* PHP>=7.0
+* MySQL server
 
 ## How to install it
 * First of all, install the website with these commands
@@ -17,13 +21,7 @@ A file sharing website written in PHP. You can find it here : https://pleaserape
 * Change the parameters in the config.json file and in the index.php file (in the public folder) as you want.
   Since you cannot change the ```upload_max_filesize``` parameter directly in the config file/script, you have to be sure that the value of ```"uploadMaxSize"``` is smaller than ```upload_max_filesize``` on your php.ini file (by default 2MB).
 * Add a public and a private recaptcha key.
-* Then, run the database creation script.
-* Also give the server permission to access to the folder, by editing the conf file and probably by doing ```sudo chown www-data /path/to/site```
-
-## Dependencies
-* PHP>=7
-* MySQL database
-* Make sure you have your "rewrite engine" on (an .htaccess is in the public folder for Apache users)
+* Then, run ```schema.sql``` into your MySQL database.
 
 ## Some cool features
 * Per account upload limit
@@ -44,10 +42,10 @@ A file sharing website written in PHP. You can find it here : https://pleaserape
 * ```/api/getUploads```<br />
   GET method<br />
   Parameters :
-	* file : your file to upload
 	* offset : the index to get your files
+  * A cookie header named from your config.json with your API key
 
-  Example : /api/getUploads?apikey=yourapikey&offset=1
+  Example : /api/getUploads?offset=1
 
 ### To-do
 * Admin page
