@@ -72,7 +72,9 @@ $(() => {
 			}
 			$('#uploads').empty();
 			data.msg.forEach((f) => {
-				let str = '<div class="file" id="'+f.filename+'">';
+				let str = '<div id="'+f.filename+'" class="';
+
+				str += (f.important == 1) ? 'file file-important">' : 'file">';
 
 				if(f.mediatype.startsWith('image'))
 					str += '<img class="fileImage" src="/'+f.filename+'" />';
@@ -86,7 +88,7 @@ $(() => {
 				else str += '<img class="fileDefault" src="/img/icon-file.png" />';
 
 				if(f.origin.length > 25)
-					str += '<span clas="fileName">'+f.origin.substring(0, 22)+'...</span><div class="fileFooter"><div>';
+					str += '<span clas="fileName">'+f.origin.substring(0, 22)+'...</span><div class="fileFooter"><span>';
 				else
 					str += '<span clas="fileName">'+f.origin+'</span><div class="fileFooter"><span>';
 
@@ -144,7 +146,7 @@ $(() => {
 			complete: (data) => {
 				$('#upload-bar div').css('width', '100%').text('100%');
 				if(data.responseJSON.success) {
-					$('#upload-msg').html('<a href="/'+data.responseJSON.msg+'">'+data.responseJSON.msg+'</a>');
+					$('#upload-msg').html('<a href="'+data.responseJSON.url+'">'+data.responseJSON.msg+'</a>');
 					//add one file
 					total++;
 					$('#total').text(total);
@@ -182,6 +184,9 @@ $(() => {
 			$('#upload-bar div').css('background-color', '#004600');
 		} else if(type == 'infos') {
 			$('.infos-user').hide(250);
+			$('header, div.inner.cover, footer').css('filter', '');
+		} else if(type == 'file') {
+			$('.infos-file').hide(250);
 			$('header, div.inner.cover, footer').css('filter', '');
 		}
 	};
@@ -293,10 +298,14 @@ $(() => {
 				removePopup();
 			}
 		}
-
 		if(!$(e.target).closest('.infos-user').length) {
 			if($('.infos-user').is(":visible")) {
 				removePopup('infos');
+			}
+		}
+		if(!$(e.target).closest('.infos-file').length) {
+			if($('.infos-file').is(":visible")) {
+				removePopup('file');
 			}
 		}
 	});
@@ -390,7 +399,40 @@ $(() => {
 	$(document).on('click', '.get-infos-file', function(e) {
 		e.preventDefault();
 		var file = $(this).parent().parent().parent().attr('id');
-		console.log(file);
+		$('.infos-file').show(250);
+		$('header, div.inner.cover, footer').css('filter', 'blur(5px)');
+
+		$.get('/api/getInfosFile', {filename: file}, (data) => {
+			if(!data.success) return;
+			$('#file-tmp-id').val(file);
+			$('#file-name').text(data.msg.file_name);
+			$('#file-url').html('<a href="'+data.msg.url+'" target="_blank">'+data.msg.url+'</a>');
+			$('#file-type').text(data.msg.media_type);
+			$('#file-size').text(data.msg.size);
+			$('#file-date').text(data.msg.date);
+			if(data.msg.important == 0) {
+				$('#file-important').text('No');
+				$('#make-important').text('Make this file as important (WORK IN PROGRESS)');
+			} else {
+				$('#file-important').html('Yes <i class="fa fa-star" style="color:#b8b825"></i>');
+				$('#make-important').text('No longer make this file as important');
+			}
+		});
+
+		return false;
+	});
+
+	$('#close-infos-file').on('click', (e) => {
+		removePopup('file');
+	});
+
+	//Options from infobox : mark important and delete
+	$(document).on('click', '#make-important', function(e) {
+
+	});
+
+	$(document).on('click', '#delete-file', function(e) {
+
 	});
 
 	/**

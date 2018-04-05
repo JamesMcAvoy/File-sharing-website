@@ -71,6 +71,15 @@ BEGIN
 
 END$$
 
+DROP PROCEDURE IF EXISTS `get_infos_file`$$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `get_infos_file`(IN `p_filename` VARCHAR(64), IN `p_apikey` VARCHAR(256))
+    NO SQL
+BEGIN
+
+SELECT `origin_name`, `file_name`, `media_type`, `size`, `date`, `important` FROM `files` WHERE `id_user` = (SELECT `id` FROM `users` WHERE `api_key` = `p_apikey`) AND `file_name` = p_filename;
+
+END$$
+
 DROP PROCEDURE IF EXISTS `get_infos_user`$$
 CREATE DEFINER=`root`@`localhost` PROCEDURE `get_infos_user`(IN `p_apikey` VARCHAR(256), OUT `r_size_used` BIGINT(20), OUT `r_file_number` INT(11))
     NO SQL
@@ -183,7 +192,7 @@ CREATE TABLE IF NOT EXISTS `blobs` (
 `id` int(11) NOT NULL,
   `stream` longblob NOT NULL,
   `hash` varchar(128) NOT NULL
-) ENGINE=InnoDB AUTO_INCREMENT=54 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=95 DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
 
@@ -202,7 +211,7 @@ CREATE TABLE IF NOT EXISTS `files` (
   `size` bigint(11) unsigned NOT NULL,
   `date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `important` tinyint(1) NOT NULL
-) ENGINE=InnoDB AUTO_INCREMENT=83 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=137 DEFAULT CHARSET=latin1;
 
 --
 -- RELATIONS FOR TABLE `files`:

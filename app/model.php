@@ -226,8 +226,32 @@ function getUploads($db, $apikey, $offset, $limit) {
 			'origin' => htmlentities($value['origin_name']),
 			'filename' => htmlentities($value['file_name']),
 			'mediatype' => $value['media_type'],
-			'timestamp' => strtotime($value['date'])
+			'timestamp' => strtotime($value['date']),
+			'important' => $value['important']
 		);
+	}
+
+	return $return;
+
+}
+
+/**
+ * Return infos on a file uploaded by an user
+ */
+function getInfosFile($db, $filename, $apikey) {
+
+	$req = $db->prepare('CALL get_infos_file(:filename, :apikey)');
+	$req->bindParam(':filename', $filename, PDO::PARAM_STR, 64);
+	$req->bindParam(':apikey', $apikey, PDO::PARAM_INT, 256);
+	$req->execute();
+	$tmp = $req->fetchAll(PDO::FETCH_ASSOC);
+	$req->closeCursor();
+	$return = [];
+
+	if(empty($tmp)) return [];
+
+	foreach($tmp['0'] as $key => $value) {
+		$return[$key] = $value;
 	}
 
 	return $return;

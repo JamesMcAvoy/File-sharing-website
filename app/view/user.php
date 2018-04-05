@@ -50,13 +50,50 @@
 			</div>
 
 			<div class="infos-file" style="display: none">
+				<i class="fa fa-close" id="close-infos-file"></i>
+				<table class="infos-file-table">
+					<tbody>
+						<tr>
+							<td>Name</td>
+							<td id="file-name"></td>
+						</tr>
+						<tr>
+							<td>Url</td>
+							<td id="file-url"></td>
+						</tr>
+						<tr>
+							<td>Type</td>
+							<td id="file-type"></td>
+						</tr>
+						<tr>
+							<td>Size</td>
+							<td id="file-size"></td>
+						</tr>
+						<tr>
+							<td>Date</td>
+							<td id="file-date"></td>
+						</tr>
+						<tr>
+							<td>Important</td>
+							<td id="file-important"></td>
+						</tr>
+					</tbody>
+				</table>
+				<input type="hidden" id="file-tmp-id" />
+				<p class="m-3">
+					Important files are only deleted after regular files when you reach your upload limit.<br />
+					<a href="#" id="make-important"></a>
+				</p>
+				<p class="m-2">
+					<a href="#" id="delete-file">Delete this file (WORK IN PROGRESS) <i class="fa fa-trash" style="color:#b82525"></i></a>
+				</p>
 			</div>
 
 			<div class="infos-user" style="display: none">
 				<i class="fa fa-close" id="close-infos"></i>
 				<p>
-					Size limit : <?= $accountMaxSize ?><br />
-					Limit per upload : <?= $uploadMaxSize ?><br />
+					Size limit : <span id="size-limit"><?= $accountMaxSize ?></span><br />
+					Limit per upload : <span id="limit-upload"><?= $uploadMaxSize ?></span><br />
 					Current size used : <span id="size-used"><?= $size ?></span><br />
 					Files uploaded : <span id="files-uploaded"><?= $number ?></span><br />
 					Your API key : <code class="apikey-copy"><?= $cookie ?></code> (click to copy)

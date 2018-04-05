@@ -176,6 +176,11 @@ input[type="password"], input[type="text"], input[type="email"] {
 	border-radius: 3px;
 }
 
+.file-important {
+	border: 1px solid #444;
+	background-color: #222;
+}
+
 .fileImage, 
 .fileVideo {
 	cursor: pointer;
@@ -258,7 +263,8 @@ input[type="password"], input[type="text"], input[type="email"] {
 }
 
 #close-upload,
-#close-infos {
+#close-infos,
+#close-infos-file {
 	cursor: pointer;
 	display: inline;
 	position: absolute;
@@ -326,12 +332,28 @@ input[type="password"], input[type="text"], input[type="email"] {
 	margin-bottom: 5px;
 }
 
+#size-limit,
+#size-used,
+#limit-upload,
+#files-uploaded {
+	color: #777;
+}
+
 .infos-user,
 .infos-file {
 	background-color: #141414;
 	border-radius: 2px;
 	padding: 15px;
 	width: 700px;
+}
+
+.infos-file-table {
+	margin: auto;
+	text-align: center;
+}
+
+.infos-file-table td {
+	padding: 0.3em;
 }
 
 .infos-user p {
@@ -413,8 +435,14 @@ input[type="password"], input[type="text"], input[type="email"] {
 	#upload-msg {
 		position: static;
 	}
-	.infos-user {
+	.infos-user,
+	.infos-file {
 		width: 90%;
+	}
+	.apikey-copy {
+		display: block;
+		margin: 0 -15% 0 -15%;
+		word-break: break-all;
 	}
 }
 

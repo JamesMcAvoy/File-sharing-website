@@ -81,6 +81,7 @@ function apiUpload($req, $res, $config) {
 	$body = $res->getBody();
 	$body->write(json_encode(array(
 		'success' => true,
+		'url'	  => $req->getUri()->getScheme().'://'.$req->getUri()->getHost().'/'.$filename,
 		'msg'	  => $filename
 	)));
 
@@ -171,12 +172,19 @@ function apiGetInfosFile($req, $res, $config) {
 	if(!filenameExists($db, $params['filename']))
 		return apiError($res, 404, 'File not found');
 
-	/** @todo : CALL get_infos_file */
+	$infos = getInfosFile($db, $params['filename'], $session[$config['cookieName']]);
+	$infos['size'] = convertToNotation($infos['size']);
+	$infos['url'] = $req->getUri()->getScheme().'://'.$req->getUri()->getHost().'/'.$infos['file_name'];
+	$infos['file_name'] = $infos['origin_name'];
+	unset($infos['origin_name']);
+
+	if(empty($infos))
+		return apiError($res, 403, 'You did not upload this file');
 
 	$body = $res->getBody();
 	$body->write(json_encode(array(
 		'success' => true,
-		'msg'	  => ''
+		'msg'	  => $infos
 	)));
 	
 	return $res->withBody($body)->withHeader('Content-Type', 'application/json');
