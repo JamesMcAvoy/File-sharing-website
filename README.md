@@ -48,8 +48,16 @@ A file sharing website written in PHP. You can find it here : https://pleaserape
   Example : /api/getUploads?offset=1
 * GET ```/api/getInfos```<br />
   Return infos on user<br />
-  Parameters :
+  Parameter :
 	* A cookie header named from your config.json with your API key
+
+* GET ```/api/getInfosFile```<br />
+  Return infos on a file passed as parameter
+  Parameters :
+  * filename
+  * A cookie header named from your config.json with your API key
+
+  Example : /api/getInfosFile?filename=0x9pH.png
 
 ### To-do
 * Admin page

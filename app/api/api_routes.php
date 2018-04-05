@@ -40,6 +40,18 @@ $app->get('/api/getInfos', function($req, $res) use($config) {
 });
 
 /**
+ * GET request
+ * Return infos on a file
+ * Parameter : filename
+ * Cookie header apikey
+ */
+$app->get('/api/getInfosFile', function($req, $res) use($config) {
+
+	return apiGetInfosFile($req, $res, $config);
+
+});
+
+/**
  * Handle errors related to the api
  */
 $app->get('/api/upload', function($req, $res) {
@@ -58,5 +70,11 @@ $app->post('/api/getInfos', function($req, $res) {
 	return apiError($res);
 });
 $app->delete('/api/getInfos', function($req, $res) {
+	return apiError($res);
+});
+$app->post('/api/getInfosFile', function($req, $res) {
+	return apiError($res);
+});
+$app->delete('/api/getInfosFile', function($req, $res) {
 	return apiError($res);
 });

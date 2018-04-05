@@ -150,3 +150,35 @@ function apiGetInfos($req, $res, $config) {
 	return $res->withBody($body)->withHeader('Content-Type', 'application/json');
 
 }
+
+/**
+ * GET API infos file controller
+ */
+function apiGetInfosFile($req, $res, $config) {
+
+	$session = $req->getCookieParams();
+	$params = $req->getQueryParams();
+
+	$db = connect($config);
+	if(is_string($db)) return apiError($res, 503, $db);
+
+	if(!isset($params['filename']))
+		return apiError($res, 400, 'Empty field filename');
+
+	if(empty($session[$config['cookieName']]) || !apikeyExists($db, $session[$config['cookieName']]))
+		return apiError($res, 400, 'Invalid apikey cookie.');
+
+	if(!filenameExists($db, $params['filename']))
+		return apiError($res, 404, 'File not found');
+
+	/** @todo : CALL get_infos_file */
+
+	$body = $res->getBody();
+	$body->write(json_encode(array(
+		'success' => true,
+		'msg'	  => ''
+	)));
+	
+	return $res->withBody($body)->withHeader('Content-Type', 'application/json');
+
+}

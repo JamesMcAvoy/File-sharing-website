@@ -390,6 +390,7 @@ $(() => {
 	$(document).on('click', '.get-infos-file', function(e) {
 		e.preventDefault();
 		var file = $(this).parent().parent().parent().attr('id');
+		console.log(file);
 	});
 
 	/**
