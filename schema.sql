@@ -142,7 +142,7 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `get_uploads_list_from_apikey_offset
     NO SQL
 BEGIN
 
-  SELECT `origin_name`, `file_name`, `media_type`, `date` FROM `files` WHERE `id_user` = (SELECT `id` FROM `users` WHERE `api_key` = p_apikey) ORDER BY `date` DESC LIMIT p_limit OFFSET p_offset;
+  SELECT `origin_name`, `file_name`, `media_type`, `date`, `important` FROM `files` WHERE `id_user` = (SELECT `id` FROM `users` WHERE `api_key` = p_apikey) ORDER BY `date` DESC LIMIT p_limit OFFSET p_offset;
 
 END$$
 
@@ -186,18 +186,22 @@ DELIMITER ;
 --
 -- Table structure for table `blobs`
 --
+-- Creation: Apr 01, 2018 at 06:05 PM
+--
 
 DROP TABLE IF EXISTS `blobs`;
 CREATE TABLE IF NOT EXISTS `blobs` (
 `id` int(11) NOT NULL,
   `stream` longblob NOT NULL,
   `hash` varchar(128) NOT NULL
-) ENGINE=InnoDB AUTO_INCREMENT=95 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
 
 --
 -- Table structure for table `files`
+--
+-- Creation: Apr 02, 2018 at 03:09 PM
 --
 
 DROP TABLE IF EXISTS `files`;
@@ -211,7 +215,7 @@ CREATE TABLE IF NOT EXISTS `files` (
   `size` bigint(11) unsigned NOT NULL,
   `date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `important` tinyint(1) NOT NULL
-) ENGINE=InnoDB AUTO_INCREMENT=137 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=latin1;
 
 --
 -- RELATIONS FOR TABLE `files`:
@@ -226,6 +230,8 @@ CREATE TABLE IF NOT EXISTS `files` (
 --
 -- Table structure for table `users`
 --
+-- Creation: Apr 01, 2018 at 07:31 PM
+--
 
 DROP TABLE IF EXISTS `users`;
 CREATE TABLE IF NOT EXISTS `users` (
@@ -237,7 +243,7 @@ CREATE TABLE IF NOT EXISTS `users` (
   `file_number` int(11) unsigned NOT NULL,
   `size_used` bigint(20) unsigned NOT NULL,
   `allowed` tinyint(1) NOT NULL
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=latin1;
 
 --
 -- Indexes for dumped tables
@@ -261,6 +267,25 @@ ALTER TABLE `files`
 ALTER TABLE `users`
  ADD PRIMARY KEY (`id`);
 
+--
+-- AUTO_INCREMENT for dumped tables
+--
+
+--
+-- AUTO_INCREMENT for table `blobs`
+--
+ALTER TABLE `blobs`
+MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=0;
+--
+-- AUTO_INCREMENT for table `files`
+--
+ALTER TABLE `files`
+MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=0;
+--
+-- AUTO_INCREMENT for table `users`
+--
+ALTER TABLE `users`
+MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=0;
 --
 -- Constraints for dumped tables
 --
