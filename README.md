@@ -1,5 +1,5 @@
 # File sharing website
-A file sharing website for uploading and managing files written in PHP. You can find it here : https://pleaserape.me/<br />
+A file sharing website for uploading and managing files written in PHP.
 <img src="https://i.imgur.com/YwXKhIb.png" />
 
 - [Requirements](#requirements)
